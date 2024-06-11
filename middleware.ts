@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import authConfig from "./auth.config";
 import {prefixRoutes, authRouter, DEFAULT_REDIRECT_ROUTE}  from '@/router'
+import { redirect } from "next/navigation";
 
 
 const { auth } = NextAuth(authConfig)
@@ -25,9 +26,9 @@ export default auth ((req) => {
     }
 
     if(!isLogin) {
-        return Response.redirect(new URL('/login', nextUrl))
+        return Response.redirect(new URL("/login", nextUrl))
     }
-
+    
 })
 
 export const config = {

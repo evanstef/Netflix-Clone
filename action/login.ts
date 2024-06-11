@@ -3,7 +3,7 @@
 import { getUserByEmail } from "@/app/data/data"
 import { LoginSchema } from "@/app/schema"
 import { DEFAULT_REDIRECT_ROUTE } from "@/router"
-import { signIn } from '@/auth'
+import { signIn } from "@/auth"
 import * as z from "zod"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
@@ -27,7 +27,7 @@ export const login = async (values : z.infer<typeof LoginSchema>) => {
            email,
            password,
            redirect : true,
-           redirectTo : DEFAULT_REDIRECT_ROUTE
+           redirectTo : DEFAULT_REDIRECT_ROUTE,
         })
     } catch (error) {
         if(error instanceof AuthError) {

@@ -18,7 +18,11 @@ import LoadingUiBesar from './LoadingUiBesar';
 const url = process.env.NEXT_PUBLIC_TMDB_URL
 const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY
 
-const BackgroundHome = () => {
+interface Props {
+  data : any
+}
+
+const BackgroundHome = ({data} : Props) => {
   const [movies, setMovies] = useState([])
   const pathname = usePathname()
   const swiper = useRef(null)
@@ -60,7 +64,7 @@ const BackgroundHome = () => {
       >
         {movies.sort((a : any , b : any) => b.vote_count - a.vote_count).map((movie : AllMovie, i : any) => (
           <SwiperSlide key={i}>
-            <Background title={movie.title} overview={movie.overview} background={movie.backdrop_path} id={movie.id} ratings={movie.vote_average} year={movie.release_date} />
+            <Background data={data} title={movie.title} overview={movie.overview} background={movie.backdrop_path} id={movie.id} ratings={movie.vote_average} year={movie.release_date} />
           </SwiperSlide>
         ))}
       </Swiper>

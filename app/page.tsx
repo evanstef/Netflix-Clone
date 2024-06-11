@@ -2,7 +2,7 @@
 
 import Wrapper from "./_component/Wrapper";
 import CardMovies from "./_component/CardMovies";
-import { AllMovie } from "@/data/api";
+import { AllMovie, AllTvShows } from "@/data/api";
 import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper styles
 import 'swiper/css';
@@ -14,6 +14,10 @@ import { useEffect, useState } from "react";
 import LoadingUi from "./_component/LoadingUi";
 import BackgroundHome from "./_component/BackgroundHome";
 import PopularCardMovies from "./_component/PopularCardMovies";
+import { useData } from "@/context/dataContext";
+import PopularCardTvShows from "./_component/PopularCardTvShows";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import { dataWatchList } from "@/action/dataWatchList";
 
 const url = process.env.NEXT_PUBLIC_TMDB_URL
 const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY
@@ -24,10 +28,20 @@ export default function Home () {
   const [romanceAndDramaMovies, setMoviesRomanceAndDrama] = useState([])
   const [horrorAndThrillerMovies, setMoviesHorrorAndThriller] = useState([])
   const [cartoonMovies, setMoviesCartoonMovies] = useState([])
-
+  const {resultMovies, resultTvShows, valueSearch} = useData()
+  const [array, setData] = useState<any>([]);
+  const user = useCurrentUser()
+  
   
   // fetch all movie
   useEffect(() => {
+    const fetchData = async () => {
+      if (user && user.id) {
+        const data = await dataWatchList(user.id);
+        setData(data);
+      }
+    }
+
     const fetchMovies = async () => {
       try {
         const response = await fetch(`${url}/movie/popular?page=1&api_key=${apiKey}`, {
@@ -52,122 +66,214 @@ export default function Home () {
         console.log(error);
       }
     }
+    fetchData()
     fetchMovies()
     fetchMoviesByGenres([28,80], setMoviesFightAndCrime)
     fetchMoviesByGenres([10749], setMoviesRomanceAndDrama)
     fetchMoviesByGenres([27,53,9648], setMoviesHorrorAndThriller)
     fetchMoviesByGenres([16], setMoviesCartoonMovies)
-
-  }, [])
+  }, [user])
   // end fetching
   
   
   return (
     <>
-    <BackgroundHome />
+    {valueSearch.length >= 3 ? 
     <Wrapper>
       <div className="space-y-20">
-        {/* Popular Card */}
-        <div className="space-y-6">
-          <h1 className="text-2xl font-bold">Popular In Netflix</h1>
-          <div className={`${popular.length === 0 ? 'w-full' : 'grid grid-cols-6'}`}>
-            {popular.length === 0 ? <LoadingUi /> : popular.sort((a : any, b : any) => b.vote_count - a.vote_count).slice(0,6).map((data : AllMovie, i : any) => (
-              <div key={i}>
-                <PopularCardMovies id={data.id} title={data.title} overview={data.overview} poster={data.poster_path} year={data.release_date} ratings={data.vote_average}/>
-              </div>
-            ))}
-            
-          </div> 
-        </div>
-        
-        {/* Action Movies */}
+        <h1 className="text-2xl font-bold">All Search Result <span className="text-red-500">{valueSearch}</span></h1>
+        {/* AllSearchResultMovies */}
         <div>
-          <h1 className="text-xl font-bold">Fighting And Crimes Scene</h1>
-          {fightAndCrimeMovies.length === 0 ? <LoadingUi /> : ( 
-              <Swiper 
-              slidesPerView={6} 
-              spaceBetween={10} 
-              freeMode={true}
-              mousewheel={true}
-              pagination={{clickable: true, el : '.swiper-pagination' }} 
-              modules={[Pagination, Navigation, Mousewheel, FreeMode]}
-              >
-                {fightAndCrimeMovies.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
-                  <SwiperSlide className="p-10" key={i}>
-                    <CardMovies id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path} year={data.release_date}  />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-           )}
+        <h1 className="text-2xl font-bold mb-6">Movies</h1>
+        <div className={`${resultMovies.length === 0 ? 'w-full' : 'grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-10'}`}>
+        {resultMovies.length === 0 ? <h1 className="text-3xl font-bold text-center">No Result</h1> : resultMovies.sort((a : any, b : any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
+                <div key={i}>
+                  <PopularCardMovies data={array} id={data.id} title={data.title} overview={data.overview} poster={data.poster_path} year={data.release_date} ratings={data.vote_average}/>
+                </div>
+              ))}
         </div>
-
-        {/* Romance & Drama */}
+        {/* AllSearchResultTv */}
         <div>
-          <h1 className="text-xl font-bold">Love Story About Relationship</h1>
-          {romanceAndDramaMovies.length === 0 ? <LoadingUi /> : ( 
-              <Swiper 
-              slidesPerView={6} 
-              spaceBetween={10} 
-              freeMode={true}
-              mousewheel={true}
-              pagination={{clickable: true, el : '.swiper-pagination' }} 
-              modules={[Pagination, Navigation, Mousewheel, FreeMode]}
-              >
-                {romanceAndDramaMovies.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
-                  <SwiperSlide className="p-10" key={i}>
-                    <CardMovies id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path} year={data.release_date}  />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-           )}
-        </div>
-
-        {/* Horror Movies */}
-        <div>
-          <h1 className="text-xl font-bold mb-6">Make You Night Scary</h1>
-          {horrorAndThrillerMovies.length === 0 ? <LoadingUi /> : ( 
-              <Swiper 
-              slidesPerView={6} 
-              spaceBetween={10} 
-              freeMode={true}
-              mousewheel={true}
-              pagination={{clickable: true, el : '.swiper-pagination' }} 
-              modules={[Pagination, Navigation, Mousewheel, FreeMode]}
-              >
-                {horrorAndThrillerMovies.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
-                  <SwiperSlide className="p-10" key={i}>
-                    <CardMovies id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path} year={data.release_date}  />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-           )}
-        </div>
-
-        {/* Back To Childhood */}
-        <div>
-          <h1 className="text-xl font-bold mb-6">Back To Childhood</h1>
-          {cartoonMovies.length === 0 ? <LoadingUi /> : ( 
-              <Swiper 
-              slidesPerView={6} 
-              spaceBetween={10} 
-              freeMode={true}
-              mousewheel={true}
-              pagination={{clickable: true, el : '.swiper-pagination' }} 
-              modules={[Pagination, Navigation, Mousewheel, FreeMode]}
-              >
-                {cartoonMovies.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
-                  <SwiperSlide className="p-10" key={i}>
-                    <CardMovies id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path} year={data.release_date}  />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-           )}
+          <h1 className="text-2xl font-bold mt-16 mb-6">Tv Shows</h1>
+          <div className={`${resultTvShows.length === 0 ? 'w-full' : 'grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-10'}`}>
+              {resultTvShows.length === 0 ? <h1 className="text-3xl font-bold text-center">No Result</h1> : resultTvShows.sort((a : any, b : any) => b.vote_count - a.vote_count).map((data : AllTvShows, i : any) => (
+                <div key={i}>
+                  <PopularCardTvShows data={array} id={data.id} title={data.name} overview={data.overview} poster={data.poster_path} year={data.first_air_date} ratings={data.vote_average}/>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
-      
-       {/* <h1>{JSON.stringify(user)}</h1>
-       <button onClick={() => signOut()}>Logout</button> */}
+    </div>
     </Wrapper>
+     : 
+    <>
+      <BackgroundHome data={array} />
+      <Wrapper>
+        <div className="space-y-20">
+          {/* Popular Card */}
+          <div className="space-y-6">
+            <h1 className="text-2xl font-bold">Popular In Netflix</h1>
+            <div className={`${popular.length === 0 ? 'w-full' : 'grid grid-cols-2 md:grid-cols-4 gap-5 xl:grid-cols-6'}`}>
+              {popular.length === 0 ? <LoadingUi /> : popular.sort((a : any, b : any) => b.vote_count - a.vote_count).slice(0,6).map((data : AllMovie, i : any) => (
+                <div key={i}>
+                  <PopularCardMovies data={array} id={data.id} title={data.title} overview={data.overview} poster={data.poster_path} year={data.release_date} ratings={data.vote_average}/>
+                </div>
+              ))}
+              
+            </div> 
+          </div>
+          
+          {/* Action Movies */}
+          <div>
+            <h1 className="text-xl font-bold">Fighting And Crimes Scene</h1>
+            {fightAndCrimeMovies.length === 0 ? <LoadingUi /> : ( 
+                <Swiper 
+                freeMode={true}
+                mousewheel={true}
+                pagination={{clickable: true, el : '.swiper-pagination' }} 
+                modules={[Pagination, Navigation, Mousewheel, FreeMode]}
+                breakpoints={{
+                  // when window width is >= 0px
+                  0: {
+                    slidesPerView: 2,
+                    spaceBetween: 10
+                  },
+                  // when window width is >= 768px
+                  768: {
+                    slidesPerView: 4,
+                    spaceBetween: 5
+                  }, 
+                  // when window width is >= 1280px
+                  1280 : {
+                    slidesPerView: 5,
+                    spaceBetween: 10
+                  }
+                }}
+                >
+                  {fightAndCrimeMovies.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
+                    <SwiperSlide className="p-5 md:p-10" key={i}>
+                      <CardMovies data={array} id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path} year={data.release_date}  />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+            )}
+          </div>
+
+          {/* Romance & Drama */}
+          <div>
+            <h1 className="text-xl font-bold">Love Story About Relationship</h1>
+            {romanceAndDramaMovies.length === 0 ? <LoadingUi /> : ( 
+                <Swiper 
+                freeMode={true}
+                mousewheel={true}
+                pagination={{clickable: true, el : '.swiper-pagination' }} 
+                modules={[Pagination, Navigation, Mousewheel, FreeMode]}
+                breakpoints={{
+                  // when window width is >= 0px
+                  0: {
+                    slidesPerView: 2,
+                    spaceBetween: 10
+                  },
+                  // when window width is >= 768px
+                  768: {
+                    slidesPerView: 4,
+                    spaceBetween: 5
+                  }, 
+                  // when window width is >= 1280px
+                  1280 : {
+                    slidesPerView: 5,
+                    spaceBetween: 10
+                  }
+                }}
+                >
+                  {romanceAndDramaMovies.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
+                    <SwiperSlide className="p-5 md:p-10" key={i}>
+                      <CardMovies data={array} id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path} year={data.release_date}  />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+            )}
+          </div>
+
+          {/* Horror Movies */}
+          <div>
+            <h1 className="text-xl font-bold mb-6">Make You Night Scary</h1>
+            {horrorAndThrillerMovies.length === 0 ? <LoadingUi /> : ( 
+                <Swiper 
+                freeMode={true}
+                mousewheel={true}
+                pagination={{clickable: true, el : '.swiper-pagination' }} 
+                modules={[Pagination, Navigation, Mousewheel, FreeMode]}
+                breakpoints={{
+                   // when window width is >= 0px
+                   0: {
+                    slidesPerView: 2,
+                    spaceBetween: 10
+                  },
+                  // when window width is >= 768px
+                  768: {
+                    slidesPerView: 4,
+                    spaceBetween: 5
+                  }, 
+                  // when window width is >= 1280px
+                  1280 : {
+                    slidesPerView: 5,
+                    spaceBetween: 10
+                  }
+                }}
+                >
+                  {horrorAndThrillerMovies.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
+                    <SwiperSlide className="p-5 md:p-10" key={i}>
+                      <CardMovies data={array} id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path} year={data.release_date}  />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+            )}
+          </div>
+
+          {/* Back To Childhood */}
+          <div>
+            <h1 className="text-xl font-bold mb-6">Back To Childhood</h1>
+            {cartoonMovies.length === 0 ? <LoadingUi /> : ( 
+                <Swiper  
+                freeMode={true}
+                mousewheel={true}
+                pagination={{clickable: true, el : '.swiper-pagination' }} 
+                modules={[Pagination, Navigation, Mousewheel, FreeMode]}
+                breakpoints={{
+                   // when window width is >= 0px
+                   0: {
+                    slidesPerView: 2,
+                    spaceBetween: 10
+                  },
+                  // when window width is >= 768px
+                  768: {
+                    slidesPerView: 4,
+                    spaceBetween: 5
+                  }, 
+                  // when window width is >= 1280px
+                  1280 : {
+                    slidesPerView: 5,
+                    spaceBetween: 10
+                  }
+                }}
+                >
+                  {cartoonMovies.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
+                    <SwiperSlide className="p-5 md:p-10" key={i}>
+                      <CardMovies data={array} id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path} year={data.release_date}  />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+            )}
+          </div>
+        </div>
+        
+        {/* <h1>{JSON.stringify(user)}</h1>
+        <button onClick={() => signOut()}>Logout</button> */}
+      </Wrapper>
+    </>
+    }
     </>
     
    

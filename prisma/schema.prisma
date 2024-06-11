@@ -21,6 +21,7 @@ model User {
   password      String?
   image         String?
   accounts      Account[]
+  watchList     Json[]
 }
 
 model Account {
@@ -41,3 +42,4 @@ model Account {
 
   @@unique([provider, providerAccountId])
 }
+

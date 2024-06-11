@@ -4,6 +4,12 @@ const nextConfig = {
         remotePatterns: [
             {
                 hostname : 'image.tmdb.org'
+            },
+            {
+                hostname : 'avatars.githubusercontent.com'
+            }, 
+            {
+                hostname : 'lh3.googleusercontent.com'
             }
         ]
     }

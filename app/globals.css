@@ -1,17 +1,4 @@
 @tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
-.card-list {
-    display: flex;
-    gap: 5px;
-    overflow-x: scroll;
-    padding: 32px;
-}
-
-.card-list::-webkit-scrollbar {
-    display: none;
-}
-
+  @tailwind components;
+  @tailwind utilities;
   

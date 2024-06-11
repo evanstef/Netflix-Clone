@@ -17,12 +17,14 @@ import LoadingUiBesar from './LoadingUiBesar';
 const url = process.env.NEXT_PUBLIC_TMDB_URL
 const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY
 
-const BackgroundTv = () => {
+interface Props {
+  data : any
+}
+
+const BackgroundTv = ({data} : Props) => {
     const [movies, setMovies] = useState([])
     const pathname = usePathname()
     const authRouter = ["/login", "/signup", "/error","/my-list", "/movies", "/"]
-
-    console.log(movies);
     
   
     const isDisplay = authRouter.includes(pathname)
@@ -61,7 +63,7 @@ const BackgroundTv = () => {
         >
           {movies.sort((a : any , b : any) => b.vote_count - a.vote_count).map((movie : AllTvShows, i : any) => (
             <SwiperSlide key={i}>
-              <Background title={movie.name} overview={movie.overview} background={movie.backdrop_path} id={movie.id} ratings={movie.vote_average} year={movie.first_air_date} />
+              <Background data={data} title={movie.name} overview={movie.overview} background={movie.backdrop_path} id={movie.id} ratings={movie.vote_average} year={movie.first_air_date} />
             </SwiperSlide>
           ))}
         </Swiper>

@@ -12,6 +12,8 @@ import 'swiper/css/pagination';
 // import required modules
 import { FreeMode, Pagination, Navigation, Mousewheel } from 'swiper/modules';
 import LoadingUi from '../_component/LoadingUi'
+import { dataWatchList } from '@/action/dataWatchList'
+import useCurrentUser from '@/hooks/useCurrentUser'
 
 const url = process.env.NEXT_PUBLIC_TMDB_URL
 const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY
@@ -24,8 +26,14 @@ const Movies = () => {
   const [horrorThriller, setThriller] = useState([])
   const [animation, setAnimation] = useState([])
   const [history, setHistory] = useState([])
+  const [array, setData] = useState<any>([]);
+  const user = useCurrentUser()
 
   useEffect(() => { 
+    const fetchData = async () => {
+      const data = await dataWatchList(user?.id);
+      setData(data)
+    }
     const fetchMoviesByGenres = async(genre : any, setMovies : any) => {
       try {
         const genresString = genre.join(",")
@@ -38,7 +46,7 @@ const Movies = () => {
         console.log(error);
       }
     }
-
+    fetchData()
     fetchMoviesByGenres([28], setAction)
     fetchMoviesByGenres([12], setAdventure)
     fetchMoviesByGenres([35], setComedy)
@@ -46,29 +54,41 @@ const Movies = () => {
     fetchMoviesByGenres([27,53], setThriller)
     fetchMoviesByGenres([16], setAnimation)
     fetchMoviesByGenres([36,10752], setHistory)
-  }, [])
+  }, [user])
 
   return (
     <Wrapper>
-        <div className='space-y-20'>
+        <div className='space-y-12 md:space-y-20'>
         {/* Action Movies */}
         <div>
           <h1 className="text-xl font-bold">Action Movies</h1>
           {action.length === 0 ? <LoadingUi /> : (
             <Swiper 
-              slidesPerView={6} 
-              spaceBetween={10} 
               freeMode={true}
               mousewheel={true}
               pagination={{clickable: true, el : '.swiper-pagination' }} 
               modules={[Pagination, Navigation, Mousewheel, FreeMode]}
+              breakpoints={{
+                0 : {
+                  slidesPerView: 2,
+                  spaceBetween: 10
+                }, 
+                768 : {
+                  slidesPerView: 4,
+                  spaceBetween: 10
+              },
+              1280 : {
+                slidesPerView: 5,
+                spaceBetween: 10
+              }
+              }}
               >
                 {action.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
-                  <SwiperSlide className="p-10" key={i}>
-                    <CardMovies id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path || data.poster_path} year={data.release_date}  />
+                  <SwiperSlide className="p-5 md:p-10" key={i}>
+                    <CardMovies data={array} id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path || data.poster_path} year={data.release_date}  />
                   </SwiperSlide>
                 ))}
-              </Swiper>
+            </Swiper>
           )}
         </div>
 
@@ -76,20 +96,32 @@ const Movies = () => {
         <div>
           <h1 className="text-xl font-bold">Adventure Movies</h1>
           {adventure.length === 0 ? <LoadingUi /> : (
-            <Swiper 
-              slidesPerView={6} 
-              spaceBetween={10} 
+            <Swiper  
               freeMode={true}
               mousewheel={true}
               pagination={{clickable: true, el : '.swiper-pagination' }} 
               modules={[Pagination, Navigation, Mousewheel, FreeMode]}
+              breakpoints={{
+                0 : {
+                  slidesPerView: 2,
+                  spaceBetween: 10
+                }, 
+                768 : {
+                  slidesPerView: 4,
+                  spaceBetween: 10
+              },
+              1280 : {
+                slidesPerView: 5,
+                spaceBetween: 10
+              }
+              }}
               >
                 {adventure.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
-                  <SwiperSlide className="p-10" key={i}>
-                    <CardMovies id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path || data.poster_path} year={data.release_date}  />
+                  <SwiperSlide className="p-5 md:p-10" key={i}>
+                    <CardMovies data={array} id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path || data.poster_path} year={data.release_date}  />
                   </SwiperSlide>
                 ))}
-              </Swiper>
+            </Swiper>
           )}
         </div>
 
@@ -98,16 +130,28 @@ const Movies = () => {
                 <h1 className="text-xl font-bold">Horror Movies</h1>
                 {horrorThriller.length === 0 ? <LoadingUi /> : (
             <Swiper 
-              slidesPerView={6} 
-              spaceBetween={10} 
               freeMode={true}
               mousewheel={true}
               pagination={{clickable: true, el : '.swiper-pagination' }} 
               modules={[Pagination, Navigation, Mousewheel, FreeMode]}
+              breakpoints={{
+                0 : {
+                  slidesPerView: 2,
+                  spaceBetween: 10
+                }, 
+                768 : {
+                  slidesPerView: 4,
+                  spaceBetween: 10
+              },
+              1280 : {
+                slidesPerView: 5,
+                spaceBetween: 10
+              }
+              }}
               >
                 {horrorThriller.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
-                  <SwiperSlide className="p-10" key={i}>
-                    <CardMovies id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path || data.poster_path} year={data.release_date}  />
+                  <SwiperSlide className="p-5 md:p-10" key={i}>
+                    <CardMovies data={array} id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path || data.poster_path} year={data.release_date}  />
                   </SwiperSlide>
                 ))}
               </Swiper>
@@ -116,40 +160,64 @@ const Movies = () => {
 
         {/* Animation Movies */}
             <div>
-                <h1 className="text-xl font-bold mb-6">Animation Movies</h1>
+                <h1 className="text-xl font-bold">Animation Movies</h1>
                 {animation.length === 0 ? <LoadingUi /> : (
             <Swiper 
-              slidesPerView={6} 
-              spaceBetween={10} 
               freeMode={true}
               mousewheel={true}
               pagination={{clickable: true, el : '.swiper-pagination' }} 
               modules={[Pagination, Navigation, Mousewheel, FreeMode]}
+              breakpoints={{
+                0 : {
+                  slidesPerView: 2,
+                  spaceBetween: 10
+                }, 
+                768 : {
+                  slidesPerView: 4,
+                  spaceBetween: 10
+              },
+              1280 : {
+                slidesPerView: 5,
+                spaceBetween: 10
+              }
+              }}
               >
                 {animation.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
-                  <SwiperSlide className="p-10" key={i}>
-                    <CardMovies id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path || data.poster_path} year={data.release_date}  />
+                  <SwiperSlide className="p-5 md:p-10" key={i}>
+                    <CardMovies data={array} id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path || data.poster_path} year={data.release_date}  />
                   </SwiperSlide>
                 ))}
-              </Swiper>
+            </Swiper>
           )}
             </div>
 
         {/* History Movies */}
             <div>
-                <h1 className="text-xl font-bold mb-6">History Movies</h1>
+                <h1 className="text-xl font-bold">History Movies</h1>
                 {history.length === 0 ? <LoadingUi /> : (
             <Swiper 
-              slidesPerView={6} 
-              spaceBetween={10} 
               freeMode={true}
               mousewheel={true}
               pagination={{clickable: true, el : '.swiper-pagination' }} 
               modules={[Pagination, Navigation, Mousewheel, FreeMode]}
+              breakpoints={{
+                0 : {
+                  slidesPerView: 2,
+                  spaceBetween: 10
+                }, 
+                768 : {
+                  slidesPerView: 4,
+                  spaceBetween: 10
+              },
+              1280 : {
+                slidesPerView: 5,
+                spaceBetween: 10
+              }
+              }}
               >
                 {history.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
-                  <SwiperSlide className="p-10" key={i}>
-                    <CardMovies id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path || data.poster_path} year={data.release_date}  />
+                  <SwiperSlide className="p-5 md:p-10" key={i}>
+                    <CardMovies data={array} id={data.id} title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path || data.poster_path} year={data.release_date}  />
                   </SwiperSlide>
                 ))}
               </Swiper>
@@ -158,19 +226,31 @@ const Movies = () => {
 
         {/* Comedy Movies */}
             <div>
-                <h1 className="text-xl font-bold mb-6">Comedy Movies</h1>
+                <h1 className="text-xl font-bold">Comedy Movies</h1>
                 {comedy.length === 0 ? <LoadingUi /> : (
             <Swiper 
-              slidesPerView={6} 
-              spaceBetween={10} 
               freeMode={true}
               mousewheel={true}
               pagination={{clickable: true, el : '.swiper-pagination' }} 
               modules={[Pagination, Navigation, Mousewheel, FreeMode]}
+              breakpoints={{
+                0 : {
+                  slidesPerView: 2,
+                  spaceBetween: 10
+                }, 
+                768 : {
+                    slidesPerView: 4,
+                    spaceBetween: 10
+                },
+                1280 : {
+                  slidesPerView: 5,
+                  spaceBetween: 10
+                }
+              }}
               >
                 {comedy.sort((a : any, b:any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
-                  <SwiperSlide className="p-10" key={i}>
-                    <CardMovies id={data.id}  title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path || data.poster_path} year={data.release_date}  />
+                  <SwiperSlide className="p-5 md:p-10" key={i}>
+                    <CardMovies data={array} id={data.id}  title={data.title} overview={data.overview} rating={data.vote_average} poster={data.backdrop_path || data.poster_path} year={data.release_date}  />
                   </SwiperSlide>
                 ))}
               </Swiper>

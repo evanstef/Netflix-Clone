@@ -57,3 +57,13 @@ export const getDetailTv = async (q : string) => {
     const detail = await axios.get(`${url}/tv/${q}?page=1&api_key=${apiKey}`)
     return detail.data 
 }
+
+export const searchMovies = async (q : string) => {
+    const search = await axios.get(`${url}/search/movie?query=${q}&page=1&api_key=${apiKey}`)
+    return search.data.results
+}
+
+export const searchTvShows = async (q : string) => {
+    const search = await axios.get(`${url}/search/tv?query=${q}&page=1&api_key=${apiKey}`)
+    return search.data.results
+}
