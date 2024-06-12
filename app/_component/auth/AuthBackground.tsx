@@ -9,7 +9,7 @@ type AuthProps = {
 const AuthBackground = ({children} : AuthProps) => {
   return (
     <div className='relative'>
-        <Image className='h-screen' src={bg} alt=''/>
+        <Image className='h-screen w-[2000px]' width={1920} height={1080} src={bg} alt=''/>
         {children}
     </div>
   )
