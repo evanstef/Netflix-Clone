@@ -5,6 +5,7 @@ import { AllMovie, AllTvShows, getDetailList, getDetailTv } from "@/data/api";
 import { getUserById, MovieWatchList } from "@/app/data/data";
 import { randomUUID } from "crypto";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export const addToWatchListTv = async (id : number, userId : any) => {
 
@@ -53,6 +54,5 @@ export const addToWatchListTv = async (id : number, userId : any) => {
             }
         }
     })
-
     redirect("/my-list")
 }

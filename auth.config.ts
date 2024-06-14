@@ -5,7 +5,6 @@ import Credentials from "next-auth/providers/credentials"
 import { LoginSchema } from "./app/schema";
 import { getUserByEmail } from "./app/data/data";
 import bcrypt from 'bcryptjs'
-import { redirect } from "next/navigation";
 
 
 
