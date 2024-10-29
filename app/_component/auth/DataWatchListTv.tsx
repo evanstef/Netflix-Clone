@@ -11,6 +11,8 @@ interface Props {
   data : []
 }
 
+
+
 const DataWatchListTv = ({data} : Props) => {
 
     const user = useCurrentUser()

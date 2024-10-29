@@ -36,6 +36,6 @@ export const registerr = async (values:z.infer<typeof RegisterSchema>) => {
         })
         return { success: "Created Account Successfully" };
       } catch (error) {
-        return { error: "Error Creating Account" };
+        throw error;
       }
 }

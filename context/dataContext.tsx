@@ -72,7 +72,7 @@ const DataProvider = ({children} : Props) => {
     )
 }
 
-export const useData = () => useContext(DataContext)
+export const useData = () => useContext(DataContext);
 
 export default DataProvider;
 

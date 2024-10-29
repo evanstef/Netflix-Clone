@@ -28,7 +28,6 @@ export default auth ((req) => {
     if(!isLogin) {
         return Response.redirect(new URL("/login", nextUrl))
     }
-    
 })
 
 export const config = {
