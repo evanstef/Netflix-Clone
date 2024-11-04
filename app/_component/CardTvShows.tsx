@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useState } from 'react'
 import bg from '../../public/login__bg.jpg'
 import Image from 'next/image'
@@ -23,6 +24,7 @@ type CardProps = {
 
 const CardTvShows = ({title,overview,poster,rating,year,id,type, data} : CardProps) => {
   const years = year.split("-")[0]
+  const {resetValueSearch} = useData()
   const user = useCurrentUser()
   
   let check = data?.some((item : any) => item.id === id)
@@ -38,7 +40,7 @@ const CardTvShows = ({title,overview,poster,rating,year,id,type, data} : CardPro
                   <p className='text-[6px] md:text-[7.5px] xl:text-[10px]'>{years}</p>
                   <p className='line-clamp-2'>{overview}</p>
                   <p>⭐{parseFloat(rating.toFixed(1))}</p>
-                  <Link className='bg-red-500 px-2 rounded mt-2 hover:bg-red-800 duration-300 ease-in-out text-[6px] md:text-[8px] xl:text-xs' href={`/tv/${id}`}>Details</Link>
+                  <Link onClick={() => resetValueSearch()} className='bg-red-500 px-2 rounded mt-2 hover:bg-red-800 duration-300 ease-in-out text-[6px] md:text-[8px] xl:text-xs' href={`/tv/${id}`}>Details</Link>
                 </div>  
             </div>
       </div>

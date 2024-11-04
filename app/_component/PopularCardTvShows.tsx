@@ -25,6 +25,7 @@ type PopularProps = {
 
 const PopularCardTvShows = ({poster, title, year, overview, ratings, id, data} : PopularProps) => {
   const years = year.split("-")[0]
+  const {resetValueSearch} = useData()
   const user = useCurrentUser()
   const pathname = usePathname()
 
@@ -55,7 +56,7 @@ const PopularCardTvShows = ({poster, title, year, overview, ratings, id, data} :
                   <p className='text-sm'>{years}</p>
                   <p className='line-clamp-2 text-xs md:text-base'>{overview}</p>
                   <p>⭐{parseFloat(ratings.toFixed(1))}</p>
-                  <Link className='bg-red-500 px-2 rounded mt-2 text-sm md:text-base hover:bg-red-800 duration-300 ease-in-out' href={`/tv/${id}`}>Details</Link>
+                  <Link onClick={() => resetValueSearch()} className='bg-red-500 px-2 rounded mt-2 text-sm md:text-base hover:bg-red-800 duration-300 ease-in-out' href={`/tv/${id}`}>Details</Link>
                 </div>  
             </div>
           </div>

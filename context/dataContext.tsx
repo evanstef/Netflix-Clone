@@ -10,6 +10,7 @@ interface IDataContext {
     searchTvShows : (q : string) => void;
     handleValueSearch : (e : any) => void;
     fetchData : () => void;
+    resetValueSearch : () => void;
     valueSearch : string;
     resultMovies : any
     resultTvShows : any
@@ -62,11 +63,15 @@ const DataProvider = ({children} : Props) => {
         setValueSearch(e.target.value)
     }
 
+    function resetValueSearch () {
+        setValueSearch("")
+    }
+
     
     
 
     return (
-        <DataContext.Provider value={{fetchData, searchMovies : searchAllMovies, searchTvShows : searchAllTvShows, handleValueSearch, resultMovies, resultTvShows, valueSearch, data}}>
+        <DataContext.Provider value={{fetchData, searchMovies : searchAllMovies, searchTvShows : searchAllTvShows, handleValueSearch, resultMovies, resultTvShows, valueSearch, data, resetValueSearch}}>
             {children}
         </DataContext.Provider>
     )

@@ -12,6 +12,7 @@ import { InfoCircledIcon } from '@radix-ui/react-icons'
 import { addToWatchListTv } from '@/action/addToWatchListTv'
 import useCurrentUser from '@/hooks/useCurrentUser'
 import { addToWatchList } from '@/action/addToWatchList'
+import { useData } from '@/context/dataContext'
 
 type Props = {
   title : string
@@ -25,6 +26,7 @@ type Props = {
 }
 
 const Background = ({title, overview, background, id, type, ratings, year, data} : Props) => {
+  const {resetValueSearch} = useData()
   let pathname = usePathname()
   const years = year.split("-")[0]
   const user = useCurrentUser()
@@ -44,7 +46,7 @@ const Background = ({title, overview, background, id, type, ratings, year, data}
                 </div>
                 <p className='text-[7px] md:text-xs lg:text-sm xl:text-base mb-2 md:mb-4'>{overview}</p>
                   <div className='flex gap-3'>
-                    <Link className='flex items-center gap-2 md:gap-5 px-2 bg-red-700 py-1 md:px-6 rounded-lg text-white hover:bg-red-600 duration-300' href={pathname === "/tvshows" ? `/tv/${id}` : `/movie/${id}`}>
+                    <Link onClick={() => resetValueSearch()} className='flex items-center gap-2 md:gap-5 px-2 bg-red-700 py-1 md:px-6 rounded-lg text-white hover:bg-red-600 duration-300' href={pathname === "/tvshows" ? `/tv/${id}` : `/movie/${id}`}>
                       <InfoCircledIcon color='white' className='w-4 h-4 md:w-8 md:h-8'/>
                       <p className='text-[10px] md:text-base'>Detail</p>
                     </Link>

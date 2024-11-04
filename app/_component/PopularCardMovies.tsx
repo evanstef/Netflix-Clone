@@ -13,6 +13,7 @@ import useCurrentUser from '@/hooks/useCurrentUser'
 import { usePathname } from 'next/navigation'
 import { deleteWatchList } from '@/action/deleteWatchList'
 import { useRouter } from 'next/navigation'
+import { useData } from '@/context/dataContext'
 
 type PopularProps = {
   id : number;
@@ -26,6 +27,7 @@ type PopularProps = {
 
 const PopularCardMovies = ({poster, title, year, overview, ratings, id, data} : PopularProps) => {
   const user = useCurrentUser()
+  const {resetValueSearch} = useData()
   const years = year.split("-")[0]
   const pathname = usePathname()
   const router = useRouter()
@@ -58,7 +60,7 @@ const PopularCardMovies = ({poster, title, year, overview, ratings, id, data} : 
                   <p className='text-sm'>{years}</p>
                   <p className='line-clamp-2 text-xs md:text-base'>{overview}</p>
                   <p>⭐{parseFloat(ratings.toFixed(1))}</p>
-                  <Link className='bg-red-500 px-2 rounded mt-2 hover:bg-red-800 text-sm md:text-base duration-300 ease-in-out' href={`/movie/${id}`}>Details</Link>
+                  <Link onClick={() => resetValueSearch()} className='bg-red-500 px-2 rounded mt-2 hover:bg-red-800 text-sm md:text-base duration-300 ease-in-out' href={`/movie/${id}`}>Details</Link>
                 </div>
             </div>  
       </div>   

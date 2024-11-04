@@ -10,16 +10,16 @@ import Image from 'next/image'
 import bg from '../../public/background_banner.jpg'
 import logout from '@/action/logout'
 import { signOut } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import UserInfo from './UserInfo'
 import { useData } from '@/context/dataContext'
 import {AnimatePresence, motion} from "framer-motion"
+import posterNotFound from '../../public/dskmqklmsmdq.jpg'
 
 
 const Navbar = () => {
   const pathname = usePathname()
 
-  const {searchMovies, searchTvShows, handleValueSearch, valueSearch} = useData()
+  const {searchMovies, searchTvShows, handleValueSearch, resultMovies, resultTvShows, valueSearch, resetValueSearch} = useData()
   const [openSearch, setOpenSearch] = useState(false)
   const [open, setOpen] = useState(false)
   const authRouter = ["/login", "/signup", "/error"]
@@ -31,6 +31,7 @@ const Navbar = () => {
   function handleOpen() {
     setOpen(!open)
   }
+
 
   function handleClick() {
     setOpenSearch(!openSearch)
@@ -56,12 +57,14 @@ const Navbar = () => {
     };
   }, [open]);
 
-
+  // mengurutkan hasil pencarian film berdasarkan vote_countnya 
+  const sortedMovies : Array<any> = resultMovies.sort((a: any, b: any) => b.vote_count - a.vote_count).slice(0,4);
+  const sortedTvShows : Array<any> = resultTvShows.sort((a: any, b: any) => b.vote_count - a.vote_count).slice(0,4);
 
   return ( 
     <>
       {!isAuth && 
-        <div className={`${( pathname === "/" && valueSearch.length < 3 ) || pathname === "/tvshows"  ? "absolute z-10" : ""} w-full`}>
+        <div className={`${( pathname === "/" ) || pathname === "/tvshows"  ? "absolute z-10" : ""} w-full`}>
           <div className='container mx-auto px-7 flex justify-between items-center'>
           <div className='flex items-center justify-between gap-3 w-[30%] md:w-1/2 xl:w-[40%]'>
             
@@ -88,10 +91,10 @@ const Navbar = () => {
             </svg>
             {/* Menu */}
             <div className='hidden md:flex md:text-sm lg:text-base gap-6'>
-              <Link className={`${pathname === "/" ? "underline font-bold" : ""} hover:underline`} href={"/"}>Home</Link>
-              <Link className={`${pathname === "/tvshows" ? "underline font-bold" : ""} hover:underline`} href={"/tvshows"}>Tv Shows</Link>
-              <Link className={`${pathname === "/movies" ? "underline font-bold" : ""} hover:underline`} href={"/movies"}>Movies</Link>
-              <Link className={`${pathname === "/my-list" ? "underline font-bold" : ""} hover:underline`} href={"/my-list"}>My List</Link>
+              <Link onClick={() => resetValueSearch()} className={`${pathname === "/" ? "underline font-bold" : ""} hover:underline`} href={"/"}>Home</Link>
+              <Link onClick={() => resetValueSearch()} className={`${pathname === "/tvshows" ? "underline font-bold" : ""} hover:underline`} href={"/tvshows"}>Tv Shows</Link>
+              <Link onClick={() => resetValueSearch()} className={`${pathname === "/movies" ? "underline font-bold" : ""} hover:underline`} href={"/movies"}>Movies</Link>
+              <Link onClick={() => resetValueSearch()} className={`${pathname === "/my-list" ? "underline font-bold" : ""} hover:underline`} href={"/my-list"}>My List</Link>
             </div>
           </div> 
 
@@ -99,7 +102,6 @@ const Navbar = () => {
           <div className='flex items-center gap-3 md:gap-7 lg:gap-10'>
 
             {/* Search button */}
-            {pathname === "/" && 
             <div className='flex items-center'>
                 <svg onClick={() => handleClick()} className={`invert duration-300 ${openSearch ? "opacity-0" : ""}`} xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 50 50">
                   <path d="M 21 3 C 11.621094 3 4 10.621094 4 20 C 4 29.378906 11.621094 37 21 37 C 24.710938 37 28.140625 35.804688 30.9375 33.78125 L 44.09375 46.90625 L 46.90625 44.09375 L 33.90625 31.0625 C 36.460938 28.085938 38 24.222656 38 20 C 38 10.621094 30.378906 3 21 3 Z M 21 5 C 29.296875 5 36 11.703125 36 20 C 36 28.296875 29.296875 35 21 35 C 12.703125 35 6 28.296875 6 20 C 6 11.703125 12.703125 5 21 5 Z"></path>
@@ -114,8 +116,55 @@ const Navbar = () => {
                   <path d="M9.5 15C9.5 17.2091 11.2909 19 13.5 19H17.5C19.7091 19 21.5 17.2091 21.5 15V9C21.5 6.79086 19.7091 5 17.5 5H13.5C11.2909 5 9.5 6.79086 9.5 9" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
-            </div> }
-  
+            </div>
+
+            {/* Hasil Pencarian Film dari user */}
+            {valueSearch.length > 2  &&
+              <div className={`bg-black justify-between gap-2 lg:gap-6 items-start p-2 md:p-3 absolute w-auto h-auto top-14 right-4 md:top-28 lg:top-24 lg:right-20 border-[0.5px] border-[#4b4b4b] rounded-lg z-50 ${openSearch === false ? "hidden" : "flex"}`}>
+
+                {/* ini bagian movie */}
+                <div className='space-y-2'>
+                  <h1 className='font-bold text-lg'>Movies</h1>
+                  {/* Pengecekan bila data tidak ditemukan */}
+                  {sortedMovies.length === 0 ? 
+                    <p className='text-[10px] lg:text-xs font-bold text-center'>No Result For {valueSearch}</p> 
+                    :
+                    sortedMovies.map((item : any, i) => (
+                        <Link onClick={() => resetValueSearch()} href={`/movie/${item.id}`} key={i} className='flex items-center gap-1 md:gap-2 lg:gap-3 duration-300 hover:bg-gray-600 p-1 lg:p-2 hover:cursor-pointer rounded'>
+                          <Image className='w-7 h-11 md:w-12 md:h-[70px] lg:w-16 lg:h-24 sm:rounded' src={ item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : posterNotFound } width={200} height={300} alt='' />
+                          <div className='text-[6px] md:text-[8px] lg:text-[10px]'>
+                            <p className='line-clamp-1'>{item.title}</p>
+                            <p>{item.release_date.split("-")[0]}</p>
+                            <p>⭐{parseFloat(item.vote_average.toFixed(1))}</p>
+                          </div>
+                        </Link>
+                    ))
+                    }
+                </div>
+
+                {/* ini bagian tv show */}
+                <div className='space-y-2'>
+                  <h1 className='font-bold text-lg'>Tv Shows</h1>
+                  {/* Pengecekan bila data tidak ditemukan */}
+                  {sortedTvShows.length === 0 ?
+                    <p className='text-[10px] lg:text-xs font-bold text-center'>No Result For {valueSearch}</p> 
+                    :
+                    sortedTvShows.map((item : any, i) => (
+                    <Link onClick={() => resetValueSearch()} href={`/tv/${item.id}`} key={i} className='flex items-center gap-1 md:gap-2 lg:gap-3 duration-300 hover:bg-gray-600 p-1 lg:p-2 hover:cursor-pointer rounded'>
+                      <Image className='w-7 h-11 md:w-12 md:h-[70px] lg:w-16 lg:h-24 sm:rounded' src={ item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : posterNotFound } width={200} height={300} alt='' />
+                      <div className='text-[6px] md:text-[8px] lg:text-[10px]'>
+                        <p className='line-clamp-1'>{item.name}</p>
+                        <p>{item.first_air_date.split("-")[0]}</p>
+                        <p>⭐{parseFloat(item.vote_average.toFixed(1))}</p>
+                      </div>
+                    </Link>
+                    ))
+                  }
+                </div>
+                    
+              </div>
+            }
+            
             {/* User Profile */}
             <div className=''>
               <UserInfo />

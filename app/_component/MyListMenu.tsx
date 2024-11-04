@@ -9,7 +9,7 @@ import useCurrentUser from '@/hooks/useCurrentUser'
 
 
 const MyListMenu = () => {
-    const [data, setData] = useState<any>([]);
+  const [data, setData] = useState<any>([]);
   const user = useCurrentUser();
 
   useEffect(() => {

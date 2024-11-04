@@ -77,36 +77,6 @@ const HomeMenu = () => {
   
   return (
     <>
-    {valueSearch.length >= 3 ? 
-    <Wrapper>
-      <div className="space-y-20">
-        <h1 className="text-2xl font-bold">All Search Result <span className="text-red-500">{valueSearch}</span></h1>
-        {/* AllSearchResultMovies */}
-        <div>
-        <h1 className="text-2xl font-bold mb-6">Movies</h1>
-        <div className={`${resultMovies.length === 0 ? 'w-full' : 'grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-10'}`}>
-        {resultMovies.length === 0 ? <h1 className="text-3xl font-bold text-center">No Result</h1> : resultMovies.sort((a : any, b : any) => b.vote_count - a.vote_count).map((data : AllMovie, i : any) => (
-                <div key={i}>
-                  <PopularCardMovies data={array} id={data.id} title={data.title} overview={data.overview} poster={data.poster_path} year={data.release_date} ratings={data.vote_average}/>
-                </div>
-              ))}
-        </div>
-        {/* AllSearchResultTv */}
-        <div>
-          <h1 className="text-2xl font-bold mt-16 mb-6">Tv Shows</h1>
-          <div className={`${resultTvShows.length === 0 ? 'w-full' : 'grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-10'}`}>
-              {resultTvShows.length === 0 ? <h1 className="text-3xl font-bold text-center">No Result</h1> : resultTvShows.sort((a : any, b : any) => b.vote_count - a.vote_count).map((data : AllTvShows, i : any) => (
-                <div key={i}>
-                  <PopularCardTvShows data={array} id={data.id} title={data.name} overview={data.overview} poster={data.poster_path} year={data.first_air_date} ratings={data.vote_average}/>
-                </div>
-              ))}
-          </div>
-        </div>
-      </div>
-    </div>
-    </Wrapper>
-     : 
-    <>
       <BackgroundHome data={array} />
       <Wrapper>
         <div className="space-y-20">
@@ -271,8 +241,6 @@ const HomeMenu = () => {
         {/* <h1>{JSON.stringify(user)}</h1>
         <button onClick={() => signOut()}>Logout</button> */}
       </Wrapper>
-    </>
-    }
     </>
   )
 }
